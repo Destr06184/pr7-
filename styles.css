@@ -243,6 +243,18 @@ a:focus, button:focus, input:focus, textarea:focus{
   color: var(--muted);
 }
 
+.map-container{
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255,255,255,.03);
+}
+
+.map-container iframe{
+  display: block;
+  width: 100%;
+  min-height: 300px;
+}
+
 /* FAQ Accordion */
 .faq-accordion{
   max-width: 800px;
