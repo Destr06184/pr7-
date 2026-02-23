@@ -1,0 +1,251 @@
+## Теоретическая справка
+
+1. Получение формы на странице
+
+```javascript
+// По идентификатору
+const form = document.getElementById('feedbackForm');
+
+// По селектору (первая найденная форма)
+const form2 = document.querySelector('form');
+```
+
+2. Отмена стандартной отправки формы
+
+```javascript
+form.addEventListener('submit', function (event) {
+  event.preventDefault(); // отменяет перезагрузку страницы
+  // валидация и отправка данных
+});
+```
+
+3. Проверка полей ввода (примеры)
+
+```javascript
+// ФИО (минимум 2 слова)
+const fullname = document.getElementById('fullname').value.trim();
+const words = fullname.split(' ').filter(w => w.length > 0);
+if (words.length < 2) { /* ошибка */ }
+
+// Телефон (только цифры)
+const phone = document.getElementById('phone').value.trim();
+const phoneDigits = phone.replace(/\D/g, ''); // удаляем все не-цифры
+if (phoneDigits.length < 10) { /* ошибка */ }
+
+// Email (базовая проверка)
+const email = document.getElementById('email').value.trim();
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!emailPattern.test(email)) { /* ошибка */ }
+```
+
+4. Визуальное отображение ошибок (пример для Bulma)
+
+```javascript
+// Добавление класса ошибки
+input.classList.add('is-danger');
+
+// Удаление класса ошибки
+input.classList.remove('is-danger');
+
+// Добавление текстового сообщения об ошибке
+const helpBlock = document.createElement('p');
+helpBlock.classList.add('help', 'is-danger');
+helpBlock.textContent = 'Сообщение об ошибке';
+input.parentNode.appendChild(helpBlock);
+```
+
+## Пример реализации
+
+Ниже приведён пример страницы с формой, валидацией и выводом в консоль.
+
+### Шаг 1 — Базовая структура (фрагмент `index.html`)
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Форма обратной связи</title>
+  <link rel="stylesheet" href="../styles.css">
+  <!-- подключение Bulma и т.д. по необходимости -->
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1 class="title">Форма обратной связи</h1>
+      <p class="subtitle">Заполните форму для отправки сообщения</p>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-half">
+          <form id="feedbackForm">
+            <!-- форма описана ниже -->
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>Учебный проект по фронтенд-разработке</p>
+    </div>
+  </footer>
+
+  <script src="scripts/validation.js"></script>
+  <script src="scripts/consoleLogger.js"></script>
+</body>
+</html>
+```
+
+### Шаг 2 — Структура формы (фрагмент HTML)
+
+```html
+<!-- Поле ФИО -->
+<div class="field">
+  <label class="label">ФИО <span class="has-text-danger">*</span></label>
+  <div class="control">
+    <input class="input" type="text" id="fullname" placeholder="Иванов Иван Иванович">
+  </div>
+  <p class="help" id="fullnameHelp">Введите фамилию, имя и отчество</p>
+</div>
+
+<!-- Поле Телефон -->
+<div class="field">
+  <label class="label">Телефон <span class="has-text-danger">*</span></label>
+  <div class="control">
+    <input class="input" type="tel" id="phone" placeholder="+7 (XXX) XXX-XX-XX">
+  </div>
+  <p class="help" id="phoneHelp">Формат: +7 (XXX) XXX-XX-XX</p>
+</div>
+
+<!-- Поле Email -->
+<div class="field">
+  <label class="label">Email <span class="has-text-danger">*</span></label>
+  <div class="control">
+    <input class="input" type="email" id="email" placeholder="example@mail.ru">
+  </div>
+  <p class="help" id="emailHelp">Введите корректный email адрес</p>
+</div>
+
+<!-- Сообщение -->
+<div class="field">
+  <label class="label">Сообщение</label>
+  <div class="control">
+    <textarea class="textarea" id="message" placeholder="Текст сообщения..."></textarea>
+  </div>
+  <p class="help" id="messageHelp">До 500 символов</p>
+</div>
+
+<!-- Согласие -->
+<div class="field">
+  <div class="control">
+    <label class="checkbox">
+      <input type="checkbox" id="agreement" required> Я согласен на обработку персональных данных
+    </label>
+  </div>
+</div>
+
+<!-- Кнопки -->
+<div class="field is-grouped is-grouped-centered">
+  <div class="control">
+    <button type="submit" class="button is-primary">Отправить</button>
+  </div>
+  <div class="control">
+    <button type="reset" class="button is-light">Очистить</button>
+  </div>
+</div>
+```
+
+### Шаг 3 — validation.js (пример)
+
+```javascript
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('feedbackForm');
+  if (!form) return;
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    // Сбрасываем предыдущие ошибки
+    document.querySelectorAll('.input.is-danger, .textarea.is-danger').forEach(el => el.classList.remove('is-danger'));
+    document.querySelectorAll('.help.is-danger').forEach(el => el.remove());
+
+    let isValid = true;
+
+    const fullname = document.getElementById('fullname');
+    const fullnameValue = fullname.value.trim();
+    const fullnameWords = fullnameValue.split(' ').filter(w => w.length > 0);
+    if (fullnameValue === '' || fullnameWords.length < 2) {
+      showError(fullname, 'Введите фамилию и имя');
+      isValid = false;
+    }
+
+    const phone = document.getElementById('phone');
+    const phoneValue = phone.value.trim();
+    const phoneDigits = phoneValue.replace(/\D/g, '');
+    if (phoneValue === '' || phoneDigits.length < 10) {
+      showError(phone, 'Введите корректный номер телефона (не менее 10 цифр)');
+      isValid = false;
+    }
+
+    const email = document.getElementById('email');
+    const emailValue = email.value.trim();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailValue === '' || !emailPattern.test(emailValue)) {
+      showError(email, 'Введите корректный email');
+      isValid = false;
+    }
+
+    if (isValid) {
+      const formData = {
+        fullname: fullnameValue,
+        phone: phoneValue,
+        email: emailValue,
+        message: document.getElementById('message').value.trim() || '(не заполнено)'
+      };
+
+      const validEvent = new CustomEvent('formValid', { detail: formData });
+      document.dispatchEvent(validEvent);
+
+      alert('Форма отправлена! Данные в консоли.');
+    }
+  });
+
+  function showError(input, message) {
+    input.classList.add('is-danger');
+    const help = document.createElement('p');
+    help.classList.add('help', 'is-danger');
+    help.textContent = message;
+    // добавляем сообщение после контейнера поля
+    input.closest('.field').appendChild(help);
+  }
+
+  document.querySelectorAll('.input, .textarea').forEach(input => {
+    input.addEventListener('input', function () {
+      this.classList.remove('is-danger');
+      const errors = this.closest('.field').querySelectorAll('.help.is-danger');
+      errors.forEach(el => el.remove());
+    });
+  });
+});
+```
+
+### Шаг 4 — consoleLogger.js (пример)
+
+```javascript
+document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('formValid', function (event) {
+    const formData = event.detail;
+    console.clear();
+    console.log('ФИО:', formData.fullname);
+    console.log('Телефон:', formData.phone);
+    console.log('Email:', formData.email);
+    console.log('Сообщение:', formData.message || '(не заполнено)');
+    console.log('Время отправки:', new Date().toLocaleString());
+  });
+});
+```

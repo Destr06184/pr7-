@@ -36,34 +36,33 @@
           <form id="feedbackForm" class="pure-form pure-form-stacked panel">
             <fieldset>
               <div class="form-field">
-                <label for="name">Имя</label>
-                <input id="name" type="text" placeholder="Как к вам обращаться" autocomplete="name" required>
+                <label for="fullname">ФИО <span aria-hidden="true">*</span></label>
+                <input class="input" id="fullname" type="text" placeholder="Иванов Иван Иванович" autocomplete="name" required>
+                <p class="help" id="fullnameHelp">Введите фамилию, имя и отчество</p>
               </div>
               <div class="form-field">
-                <label for="email">Email</label>
-                <input id="email" type="email" placeholder="example@email.com" autocomplete="email" required>
+                <label for="phone">Телефон <span aria-hidden="true">*</span></label>
+                <input class="input" id="phone" type="tel" placeholder="+7 (XXX) XXX-XX-XX" autocomplete="tel" required>
+                <p class="help" id="phoneHelp">Формат: +7 (XXX) XXX-XX-XX</p>
               </div>
               <div class="form-field">
-                <label for="topic">Тема</label>
-                <select id="topic" required>
-                  <option value="" disabled selected>Выберите тему</option>
-                  <option value="proposal">Предложение</option>
-                  <option value="complaint">Жалоба</option>
-                  <option value="question">Вопрос</option>
-                  <option value="thanks">Благодарность (редкость)</option>
-                </select>
+                <label for="email">Email <span aria-hidden="true">*</span></label>
+                <input class="input" id="email" type="email" placeholder="example@mail.ru" autocomplete="email" required>
+                <p class="help" id="emailHelp">Введите корректный email адрес</p>
               </div>
               <div class="form-field">
                 <label for="message">Сообщение</label>
-                <textarea id="message" rows="5" placeholder="Ваше сообщение... Можете покритиковать." required></textarea>
+                <textarea class="textarea" id="message" rows="5" placeholder="Ваше сообщение... Можете покритиковать."></textarea>
+                <p class="help" id="messageHelp">До 500 символов</p>
               </div>
               <div class="form-field">
                 <label class="pure-checkbox">
-                  <input type="checkbox" required>
+                  <input id="agreement" type="checkbox" required>
                   Соглашаюсь на обработку персональных данных
                 </label>
               </div>
               <button type="submit" class="pure-button pure-button-primary">Отправить отзыв</button>
+              <button type="reset" class="pure-button pure-button-secondary">Очистить</button>
             </fieldset>
           </form>
           <p class="small-note">Кнопка демонстрационная. Бэкенд? Какой бэкенд?</p>
@@ -112,10 +111,8 @@
   </footer>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
-    document.getElementById("feedbackForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      alert("Спасибо за отзыв! Мы его получили... ну, типа получили. Бэкенда-то нет.");
-    });
   </script>
+  <script src="./scripts/validation.js"></script>
+  <script src="./scripts/consoleLogger.js"></script>
 </body>
 </html>
